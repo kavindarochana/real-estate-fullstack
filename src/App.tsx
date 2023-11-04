@@ -6,7 +6,7 @@ import Logout from './pages/Logout';
 import Profile from './pages/Profile';
 import Header from './components/Header';
 
-export default function App() {
+const App = () => {
   return (
    <BrowserRouter>
    <Header />
@@ -20,3 +20,5 @@ export default function App() {
    </BrowserRouter>
   );
 }
+
+export default App;
