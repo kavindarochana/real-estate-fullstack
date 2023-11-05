@@ -1,13 +1,12 @@
-import express, { Request, Response } from "express";
+
+
+import { hello } from "../controllers/user.controller";
+import express from "express";
 
 
 const userRouter = express.Router();
 
-userRouter.get('/hello', (req: Request, res : Response) =>{
-    res.json({
-        message: "Hello World"
-    });
-});
+userRouter.get('/hello', hello);
 
 
 export default userRouter;
