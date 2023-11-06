@@ -1,8 +1,10 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route';
 import authRouter from './routes/auth.route';
+import { boolean } from 'webidl-conversions';
+import { Errors } from 'types';
 
 dotenv.config();
 
@@ -21,5 +23,20 @@ app.listen(3000, () => {
     console.log('Server is started on port 3000');
 });
 
+// Routes
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+
+// Middlewares
+
+// Global Errot handler
+app.use((err: Errors , req: Request, res: Response, next: NextFunction) => {
+    const statusCode = err?.statusCode || 500;
+    const message = err.message || 'Your request can\'t be process right now.';
+    return res.status(statusCode).json({
+        success : false,
+        statusCode,
+        message
+    });
+});
+
