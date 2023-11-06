@@ -29,7 +29,7 @@ app.use('/api/auth', authRouter);
 
 // Middlewares
 
-// Global Errot handler
+// Global Error handler
 app.use((err: Errors , req: Request, res: Response, next: NextFunction) => {
     const statusCode = err?.statusCode || 500;
     const message = err.message || 'Your request can\'t be process right now.';
