@@ -5,6 +5,7 @@ import About from './pages/About';
 import Logout from './pages/Logout';
 import Profile from './pages/Profile';
 import Header from './components/Header';
+import Register from './pages/Register';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Route path='/logout' element={<Logout />}/>
       <Route path='/about' element={<About />}/>
       <Route path='/profile' element={<Profile />}/>
+      <Route path='/register' element={<Register />}/>
     </Routes>
    </BrowserRouter>
   );
