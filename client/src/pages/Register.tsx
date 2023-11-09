@@ -1,10 +1,16 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+export interface ErrorResponse  {
+  success : boolean;
+  message: string;
+}
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [isError, setError] = useState(false);
+  const [isError, setError] = useState('');
   const [isLoading, setLoading] = useState(false);
 
   const handleChange = (e: { target: { id: string; value: string; }; }) => {
@@ -17,9 +23,8 @@ export default function Register() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setLoading(true);
-    setError(false);
+    setError('');
    
-
     try {
       const res = await fetch('/api/auth/register', 
       {
@@ -32,19 +37,20 @@ export default function Register() {
     );
 
     const data = await res.json();
-
+    console.log('success-', data);
     if (!data.success) {
       setLoading(false);
       setError(data.message);
       return;
     }
     
+    setError('');
     setLoading(false);
+    navigate('/login');
 
-    } catch (error) {
+    } catch (error : ErrorResponse) {
       setLoading(false);
-      setError(error.message);
-      console.log('error ', error);
+      setError(error?.message);
     }
 
   };

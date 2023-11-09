@@ -10,7 +10,7 @@ export const register = async (req : Request, res: Response, next: NextFunction)
 
     try {
         await newUser.save();
-        res.status(201).json('User created');
+        res.status(201).json({success : true, message: 'User created' });
     } catch (error ){
        next(error);
     }
