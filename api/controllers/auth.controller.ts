@@ -30,15 +30,12 @@ export const login = async (req : Request, res: Response, next: NextFunction) =>
 
         const { password : userPass, username, _id: id } = user;
 
-        const isValidPass = bcrypt.compareSync(password, userPass);
-
-        if (!isValidPass) {
+        if (!bcrypt.compareSync(password, userPass)) {
             return next(errorHandler(401, 'Invalid email or password'));
         }
 
-
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
-        res.cookie('access_token',token, {httpOnly: true,}).status(200).json({id, email,username});
+        res.cookie('access_token',token, {httpOnly: true,}).status(200).json({success: true, id, email,username});
 
     } catch(error) {
         next(error);

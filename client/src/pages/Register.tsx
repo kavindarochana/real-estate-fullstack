@@ -48,9 +48,9 @@ export default function Register() {
     setLoading(false);
     navigate('/login');
 
-    } catch (error : ErrorResponse) {
+    } catch (error) {
       setLoading(false);
-      setError(error?.message);
+      setError(error.message);
     }
 
   };
