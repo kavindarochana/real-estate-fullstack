@@ -31,9 +31,12 @@ export const userSlice  = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+        loginError: (state, action) => {
+            state.error = action.payload;
+        }
     },
 });
 
-export const { loginLoading, loginSuccess, loginFailure } = userSlice.actions;
+export const { loginLoading, loginSuccess, loginFailure, loginError } = userSlice.actions;
 
 export default userSlice.reducer;

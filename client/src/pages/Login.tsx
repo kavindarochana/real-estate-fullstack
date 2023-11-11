@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginLoading, loginSuccess, loginFailure } from '../redux/user/userSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import OAuth from '../components/OAuth';
 
 export interface ErrorResponse  {
   success : boolean;
@@ -29,7 +30,7 @@ export default function Register() {
   const handleLogin = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
-    dispatch(loginLoading());
+    dispatch(loginLoading());   
    
     try {
       const res = await fetch('/api/auth/login', 
@@ -68,6 +69,7 @@ export default function Register() {
       <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
         {loading ? 'Loading...' : 'Login'}
       </button>
+      <OAuth loading={loading}/>
     </form>
 
     <div className='flex gap-2 mt-5'>

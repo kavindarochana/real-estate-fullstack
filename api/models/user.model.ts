@@ -2,11 +2,9 @@ import mongoose from "mongoose";
 
 
 const userSchema = new mongoose.Schema({
-    username: {
+    name: {
         type: String,
         required: true,
-        unique: true,
-
     },
     email: {
         type: String,
@@ -18,6 +16,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         // select: false,
+    },
+    avatar: {
+        type: String,
+        default: 'https://templates.joomla-monster.com/joomla30/jm-news-portal/components/com_djclassifieds/assets/images/default_profile.png',
+        
     },
 }, {
     timestamps: true,
