@@ -1,6 +1,10 @@
 
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginLoading, loginSuccess, loginFailure } from '../redux/user/userSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 export interface ErrorResponse  {
   success : boolean;
@@ -10,8 +14,10 @@ export interface ErrorResponse  {
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [isError, setError] = useState('');
-  const [isLoading, setLoading] = useState(false);
+
+  const { loading, error } = useSelector((state: RootState) => state.user );
+
+  const dispatch = useDispatch();
 
   const handleChange = (e: { target: { id: string; value: string; }; }) => {
     setFormData({
@@ -22,8 +28,8 @@ export default function Register() {
 
   const handleLogin = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+
+    dispatch(loginLoading());
    
     try {
       const res = await fetch('/api/auth/login', 
@@ -37,20 +43,17 @@ export default function Register() {
     );
 
     const data = await res.json();
-    console.log('success-', data);
+
     if (!data.success) {
-      setLoading(false);
-      setError(data.message);
+      dispatch(loginFailure(data.message));
       return;
     }
     
-    setError('');
-    setLoading(false);
+    dispatch(loginSuccess(data));
     navigate('/');
 
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      loginFailure(error.message)
     }
 
   };
@@ -62,8 +65,8 @@ export default function Register() {
     <form className='flex flex-col gap-4' onSubmit={handleLogin}>
       <input type="email" placeholder='email' className='border p-3 rounded-lg' id='email' onChange={handleChange} /> 
       <input type="text" placeholder='password' className='border p-3 rounded-lg' id='password' onChange={handleChange} />
-      <button disabled={isLoading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
-        {isLoading ? 'Loading...' : 'Login'}
+      <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
+        {loading ? 'Loading...' : 'Login'}
       </button>
     </form>
 
@@ -73,7 +76,7 @@ export default function Register() {
         <span className='text-blue-700'>Register</span>
       </Link>
     </div>
-    {isError && <p className='text-red-700'>{isError}</p>}
+    {error && <p className='text-red-700'>{error}</p>}
     </div>
   );
 }
