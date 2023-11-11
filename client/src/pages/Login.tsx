@@ -19,7 +19,7 @@ export default function Register() {
 
   const dispatch = useDispatch();
 
-  const handleChange = (e: { target: { id: string; value: string; }; }) => {
+  const handleChange = (e: { target: { id: string; value: string; } }) => {
     setFormData({
       ...formData,
       [e.target.id] : e.target.value
