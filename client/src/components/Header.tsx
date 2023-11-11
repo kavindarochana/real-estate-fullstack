@@ -4,6 +4,16 @@ import { GetCurrentUser } from "../hooks/useAccount";
 
 export default function Header() {
     const currentUser = GetCurrentUser();
+
+    const RenderProfileSection = (): JSX.Element  => {
+        return (
+            <Link to={!currentUser ? '/login' : '/profile'}>
+                {!currentUser ? ( <li className="sm:inline text-slate-700 hover:underline">Login</li>) :
+                    ( <img className="rounded-full h-7 w-7 object-cover" src={currentUser.avatar} alt='avatar'/>)
+                }
+            </Link>
+        );
+    }
   
     return (
         <header className='bg-slate-200 shadow-md'>
@@ -27,17 +37,7 @@ export default function Header() {
                     <Link to={'/about'}>
                         <li className="hidden sm:inline text-slate-700 hover:underline">About</li>
                     </Link>
-                    <Link to={!currentUser ? '/login' : '/profile'}>
-                        {!currentUser ? (
-                        <li className="sm:inline text-slate-700 hover:underline">
-                            {' '}
-                            Login
-                        </li>) : (
-                            <img
-                            className="rounded-full h-7 w-7 object-cover"
-                            src={currentUser.avatar} alt='avatar'/>
-                        )}
-                    </Link>
+                    <RenderProfileSection />
                 </ul>
             </div>
             
