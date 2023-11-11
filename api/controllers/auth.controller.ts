@@ -50,10 +50,10 @@ export const googleAuth = async (req : Request, res: Response, next: NextFunctio
         const user = await User.findOne({email});
         
         if (user) {
-            const {email: userEmail, name, _id: id } = user;
+            const {email: userEmail, name, _id: id, avatar } = user;
             const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
             res.cookie('access_token',token, {httpOnly: true,}).status(200)
-            .json({success: true, id, email: userEmail, name});
+            .json({success: true, id, email: userEmail, name, avatar});
             return;
         } else {
             // Genarate random hashed password
@@ -62,7 +62,7 @@ export const googleAuth = async (req : Request, res: Response, next: NextFunctio
                 16
             );
 
-            const newUser = new User({name, email, password});
+            const newUser = new User({name, email, password, avatar: photo});
             
             newUser.save();
 
