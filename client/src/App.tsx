@@ -10,20 +10,20 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
-   <BrowserRouter>
-   <Header />
-    <Routes>
-      <Route path='/' element={<Home />}/>
-      <Route path='/login' element={<Login />}/>
-      <Route path='/logout' element={<Logout />}/>
-      <Route path='/about' element={<About />}/>
-      <Route element={<ProtectedRoute />}>
-        <Route path='/profile' element={<Profile />}/>
-      </Route>
-      <Route path='/register' element={<Register />}/>
-    </Routes>
-   </BrowserRouter>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/about" element={<About />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
