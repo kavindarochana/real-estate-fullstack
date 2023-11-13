@@ -3,3 +3,10 @@ export interface Errors {
     message: String;
     success?: boolean;
 }
+
+export interface User {
+    id: string;
+    email: String;
+    name: boolean;
+    avatar: String;
+}

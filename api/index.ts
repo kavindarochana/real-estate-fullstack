@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route';
 import authRouter from './routes/auth.route';
-import { boolean } from 'webidl-conversions';
 import { Errors } from 'types';
 
 dotenv.config();
@@ -16,6 +16,7 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING).then(() => {
 
 const app = express();
 
+app.use(cookieParser());
 // Allow json Input
 app.use(express.json());
 
