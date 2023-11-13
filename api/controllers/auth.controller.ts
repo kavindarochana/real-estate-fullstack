@@ -28,14 +28,14 @@ export const login = async (req : Request, res: Response, next: NextFunction) =>
             return next(errorHandler(401, 'Invalid email or password'));
         }
 
-        const { password : userPass, name, _id: id } = user;
+        const { password : userPass, name, _id: id, avatar } = user;
 
         if (!bcrypt.compareSync(password, userPass)) {
             return next(errorHandler(401, 'Invalid email or password'));
         }
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
-        res.cookie('access_token',token, {httpOnly: true,}).status(200).json({success: true, id, email,name});
+        res.cookie('access_token',token, {httpOnly: true,}).status(200).json({success: true, id, email, name, avatar});
 
     } catch(error) {
         next(error);
@@ -44,7 +44,7 @@ export const login = async (req : Request, res: Response, next: NextFunction) =>
 
 export const googleAuth = async (req : Request, res: Response, next: NextFunction) => {
 
-    const {email, displayName: name, photo} = req.body;
+    const {email, displayName: name, avatar} = req.body;
 
     try {
         const user = await User.findOne({email});
@@ -62,7 +62,7 @@ export const googleAuth = async (req : Request, res: Response, next: NextFunctio
                 16
             );
 
-            const newUser = new User({name, email, password, avatar: photo});
+            const newUser = new User({name, email, password, avatar: avatar});
             
             newUser.save();
 
