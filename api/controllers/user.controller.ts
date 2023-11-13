@@ -11,8 +11,8 @@ export const hello = (req: Request, res : Response) => {
 };
 
 export const updateUser = async (req: any, res : Response, next: NextFunction) => {
-    console.log('aaa', req.user.id, req.params.id)
-    if (req?.user?.id != req.params.id) {
+    const id = req?.user?.id;
+    if (id != req.params.id) {
         return next(errorHandler(401, 'Unauthorized activity'));
     }
 
@@ -35,9 +35,9 @@ export const updateUser = async (req: any, res : Response, next: NextFunction) =
 
         const { name, email, avatar, createdAt, updatedAt } = updatedUser;
 
-        res.status(200).json({name,email,avatar,createdAt, updatedAt});
+        res.status(200).json({ success: true, message: {id, name, email, avatar, createdAt, updatedAt}});
         
     } catch (error) {
-        
+        next();
     }
 };
