@@ -9,6 +9,8 @@ import {
 import { firebaseApp } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { updateUserError, updateUserFetched, updateUserLoading  } from '../redux/user/userSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 export type ProfileFormData = {
   name?: string;
@@ -24,8 +26,9 @@ export default function Profile() {
   const [uploadStatus, setUploadStatus] = useState(0);
   const [uploadError, setUploadError] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({});
+  const [isUpdated, setUpdate] = useState<boolean>(false);
 
-  const isLoading = false;
+  const { loading: isLoading, error } = useSelector((state: RootState) => state.user);
 
   const handleAvatarClick = () => {
     avatarRef?.current?.click();
@@ -82,6 +85,7 @@ export default function Profile() {
       }
 
       dispatch(updateUserFetched(data.message));
+      setUpdate(true);
       
     } catch (error) {
       dispatch(updateUserError(error.message))
@@ -159,13 +163,15 @@ export default function Profile() {
           disabled={isLoading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          Update
+          {isLoading ? 'Loading...' : 'Update'}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Logout</span>
+        <span className="text-slate-700 cursor-pointer">Delete Account</span>
+        <span className="text-slate-700 cursor-pointer">Logout</span>
       </div>
+      {error && <p className="text-red-700 cursor-pointer text-center mt-2">{error}</p>}
+      {isUpdated && <p className="text-green-700 cursor-pointer text-center mt-2">Profile data successfully updated</p>}
     </div>
   );
 }

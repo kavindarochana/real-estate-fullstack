@@ -38,7 +38,6 @@ export const userSlice = createSlice({
       state.loading = true;
     },
     updateUserFetched: (state, action) => {
-      
       state.currentUser = action.payload;
       state.loading = false;
       state.error = '';
