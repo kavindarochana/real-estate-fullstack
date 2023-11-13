@@ -18,14 +18,14 @@ const OAuth = ({ loading }: OAuthProps): JSX.Element => {
 
       const result = await signInWithPopup(auth, googleProvider);
 
-      const { email, displayName, photoURL: photo } = result.user;
+      const { email, displayName, photoURL: avatar } = result.user;
 
       const res = await fetch('/api/auth/google-auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, displayName, photo }),
+        body: JSON.stringify({ email, displayName, avatar }),
       });
 
       const data = await res.json();
