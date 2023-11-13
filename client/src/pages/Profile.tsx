@@ -7,6 +7,8 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { firebaseApp } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { updateUserError, updateUserFetched, updateUserLoading  } from '../redux/user/userSlice';
 
 export type ProfileFormData = {
   name?: string;
@@ -16,6 +18,7 @@ export type ProfileFormData = {
 
 export default function Profile() {
   const currentUser = GetCurrentUser();
+  const dispatch = useDispatch();
   const avatarRef = useRef<HTMLInputElement>(null);
   const [avatarFile, setAvatar] = useState<File>();
   const [uploadStatus, setUploadStatus] = useState(0);
@@ -28,6 +31,10 @@ export default function Profile() {
     avatarRef?.current?.click();
   };
 
+  const handleChange = (e: { target: { id: string; value: string; }; }) => {
+    setFormData({ ...formData, [e.target.id] : e.target.value });
+  }
+
   const uploadToFirebaseStorage = (avatarFile: File) => {
     const fileName = new Date().getTime() + avatarFile.name;
     const storageHandler = ref(getStorage(firebaseApp), fileName);
@@ -37,8 +44,9 @@ export default function Profile() {
     uploadHandler.on(
       'state_changed',
       (snapshot) => {
+        console.log('transfer ', snapshot.bytesTransferred);
         setUploadStatus(
-          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+         +((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(0),
         );
       },
       () => {
@@ -52,6 +60,35 @@ export default function Profile() {
     );
   };
 
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserLoading());
+
+      const res = await fetch(`/api/user/update/${currentUser?.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      
+      if (!data?.success) {
+        dispatch(updateUserError(data.message));
+        return;
+      }
+
+      dispatch(updateUserFetched(data.message));
+      
+    } catch (error) {
+      dispatch(updateUserError(error.message))
+    }
+
+  }
+
   useEffect(() => {
     if (avatarFile) {
       uploadToFirebaseStorage(avatarFile);
@@ -59,11 +96,12 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [avatarFile]);
 
+  console.log('formData.avatar  ',formData.avatar || currentUser?.avatar );
   return (
     <div className="p-3 max-w-l mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           onChange={(e) => {
             if (e?.target?.files) setAvatar(e.target?.files[0] || null);
@@ -98,18 +136,23 @@ export default function Profile() {
           placeholder="name"
           className="border p-3 rounded-lg"
           id="name"
+          defaultValue={currentUser?.name}
+          onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
           className="border p-3 rounded-lg"
           id="email"
+          defaultValue={currentUser?.email}
+          onChange={handleChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder="password"
           className="border p-3 rounded-lg"
           id="password"
+          onChange={handleChange}
         />
 
         <button
