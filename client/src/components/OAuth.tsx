@@ -1,7 +1,7 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { firebaseApp } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../redux/user/userSlice';
+import { loginError, loginFailure, loginLoading, loginSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export type OAuthProps = {
@@ -13,6 +13,7 @@ const OAuth = ({ loading }: OAuthProps): JSX.Element => {
   const navigate = useNavigate();
   const handleGoogleLogin = async () => {
     try {
+      dispatch(loginLoading());
       const googleProvider = new GoogleAuthProvider();
       const auth = getAuth(firebaseApp);
 
@@ -30,10 +31,16 @@ const OAuth = ({ loading }: OAuthProps): JSX.Element => {
 
       const data = await res.json();
 
+      if (!data.success) {
+        dispatch(loginFailure(data.message));
+        return;
+      }
+
       dispatch(loginSuccess(data));
       navigate('/');
     } catch (error) {
       console.log('google login errror ', error);
+      dispatch(loginError(error.message));
     }
   };
   return (
