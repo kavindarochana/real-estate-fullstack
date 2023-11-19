@@ -41,3 +41,19 @@ export const updateUser = async (req: any, res : Response, next: NextFunction) =
         next();
     }
 };
+
+export const deleteUser = async (req: any, res : Response, next: NextFunction) => {
+    const id = req?.user?.id;
+    if (id != req.params.id) {
+        return next(errorHandler(401, 'Unauthorized activity'));
+    }
+
+    try {
+        
+        await User.findByIdAndDelete(id);
+        res.clearCookie('access_token').status(200).json({ success: true, message: 'User has been deleted'});
+        
+    } catch (error) {
+        next();
+    }
+};

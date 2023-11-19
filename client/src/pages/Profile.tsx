@@ -8,7 +8,7 @@ import {
 } from 'firebase/storage';
 import { firebaseApp } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { updateUserError, updateUserFetched, updateUserLoading  } from '../redux/user/userSlice';
+import { deleteUserError, deleteUserFetched, deleteUserLoading, updateUserError, updateUserFetched, updateUserLoading  } from '../redux/user/userSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -81,6 +81,7 @@ export default function Profile() {
       
       if (!data?.success) {
         dispatch(updateUserError(data.message));
+        setUpdate(false);
         return;
       }
 
@@ -88,9 +89,37 @@ export default function Profile() {
       setUpdate(true);
       
     } catch (error) {
-      dispatch(updateUserError(error.message))
+      dispatch(updateUserError(error.message));
+      setUpdate(false);
     }
 
+  }
+
+  const handleUserDelete = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    try {
+      dispatch(deleteUserLoading());
+
+      const res = await fetch(`/api/user/update/${currentUser?.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const data = await res.json();
+
+      if (!data?.success) {
+        dispatch(updateUserError(data.message));
+        return;
+      }
+
+      dispatch(deleteUserFetched());
+
+
+    } catch (error) {
+      dispatch(deleteUserError(error.message));
+    }
   }
 
   useEffect(() => {
@@ -167,7 +196,7 @@ export default function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-slate-700 cursor-pointer">Delete Account</span>
+        <span onClick={handleUserDelete} className="text-slate-700 cursor-pointer">Delete Account</span>
         <span className="text-slate-700 cursor-pointer">Logout</span>
       </div>
       {error && <p className="text-red-700 cursor-pointer text-center mt-2">{error}</p>}
